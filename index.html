@@ -349,26 +349,25 @@
     function capColor(f) {
       const p = f?.properties || f;
       const code = p?.ISO_A2 || p?.iso_a2 || p?.id;
-      if (code && S.visitedCountries.has(code)) return 'rgba(79,195,247,0.5)';  // 去过：亮蓝
-      if (S.mapMode === 'satellite') return 'rgba(0,0,0,0)';                     // 卫星：透明
-      return 'rgba(15,25,45,0.55)';                                                // 行政：统一深色底
+      if (code && S.visitedCountries.has(code)) return '#4FC3F7';           // 去过：亮蓝实色
+      if (S.mapMode === 'satellite') return 'rgba(255,255,255,0.03)';       // 卫星：微不可见
+      return 'rgba(20,30,50,0.60)';                                          // 行政：深色底
     }
     function sideColor(f) {
       const p = f?.properties || f;
       const code = p?.ISO_A2 || p?.iso_a2 || p?.id;
-      if (code && S.visitedCountries.has(code)) return 'rgba(79,195,247,0.15)';
-      if (S.mapMode === 'satellite') return 'rgba(0,0,0,0)';
-      return 'rgba(10,18,35,0.7)';
+      if (code && S.visitedCountries.has(code)) return '#3a8fd4';
+      return 'rgba(15,22,38,0.7)';
     }
     function strokeColor(f) {
       const p = f?.properties || f;
       const code = p?.ISO_A2 || p?.iso_a2 || p?.id;
-      if (code && S.visitedCountries.has(code)) return '#4FC3F7';
-      if (S.mapMode === 'satellite') return 'rgba(26,48,80,0.10)';
-      return 'rgba(100,150,210,0.45)';
+      if (code && S.visitedCountries.has(code)) return '#80D8FF';
+      if (S.mapMode === 'satellite') return 'rgba(100,160,220,0.18)';       // 卫星：细微边框
+      return 'rgba(120,170,230,0.50)';                                       // 行政：清晰边框
     }
     function strokeWidth() {
-      return S.mapMode === 'satellite' ? 0.2 : 1.0;
+      return S.mapMode === 'satellite' ? 0.3 : 1.2;
     }
 
     // ======== 应用多边形（只用 hex 方法，v2.26 确定支持） ========
@@ -388,10 +387,10 @@
         globe.hexPolygonSideColor(sideColor);
         globe.hexPolygonStrokeColor(strokeColor);
         globe.hexPolygonStrokeWidth(strokeWidth());
-        globe.hexPolygonAltitude(0.002);
-        globe.hexPolygonResolution(4);        // 高分辨率，蜂窝极小
+        globe.hexPolygonAltitude(0.015);       // 加高，确保浮在球面上可见
+        globe.hexPolygonResolution(4);
         globe.onHexPolygonClick(handleClick);
-        console.log('🔧 hexPolygon 样式应用完成');
+        console.log('✅ hexPolygon 样式设置完成');
       } catch (e) {
         console.error('❌ hexPolygon 设置失败:', e.message);
         S.hasAnyApi = false;
@@ -400,10 +399,13 @@
 
     // ======== 渲染国家 ========
     function renderCountries() {
-      if (!S.geojsonData || !S.globe || !S.hasAnyApi) return;
+      if (!S.geojsonData) { console.warn('⚠️ renderCountries: 无 GeoJSON 数据'); return; }
+      if (!S.globe) { console.warn('⚠️ renderCountries: 无 globe 实例'); return; }
+      if (!S.hasAnyApi) { console.warn('⚠️ renderCountries: hexPolygon API 不可用'); return; }
       try {
+        console.log('🔧 渲染 ' + S.geojsonData.features.length + ' 个国家边界...');
         S.globe.hexPolygonsData(S.geojsonData.features);
-        console.log('✅ 国家边界已渲染 (' + S.geojsonData.features.length + ' 个)');
+        console.log('✅ 国家边界已渲染，可通过点击或搜索点亮');
       } catch (e) {
         console.error('❌ 渲染失败:', e.message);
         S.hasAnyApi = false;
