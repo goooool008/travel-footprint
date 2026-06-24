@@ -436,20 +436,6 @@
 
       setupPolygons(globe);
 
-	      // 强制居中自适应
-	      try {
-	        const canvas = globe.renderer().domElement;
-	        canvas.style.position = "absolute";
-	        canvas.style.top = "50%";
-	        canvas.style.left = "50%";
-	        canvas.style.transform = "translate(-50%, -50%)";
-	        globe.renderer().setSize(globeContainer.clientWidth, globeContainer.clientHeight);
-	        window.addEventListener("resize", () => {
-	          if (S.globe) S.globe.renderer().setSize(globeContainer.clientWidth, globeContainer.clientHeight);
-	        });
-	      } catch(e) {}
-
-
       // 控制器
       try {
         if (typeof globe.controls === 'function') {
